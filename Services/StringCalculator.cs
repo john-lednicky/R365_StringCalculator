@@ -18,8 +18,6 @@
                 })
                 .ToArray();
 
-            if (decimalArray.Length > 2) throw new FormatException(messages["MoreThanTwoNumbers"]);
-
             List<decimal> decimalList = new List<decimal>(decimalArray);
 
             return decimalList.Sum().ToString();
