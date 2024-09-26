@@ -8,7 +8,11 @@
         {
             if (input == "") return "0";
 
-            string[] inputArray = input.Split(',');
+            char[] delimiters = { ',', '\n' };
+            string normalizedInput = input;
+            foreach (char c in delimiters) normalizedInput = normalizedInput.Replace(c, ',');
+            string[] inputArray = normalizedInput.Split(',');
+
 
             //Numbers outside the range of the decimal data type will be converted to zero.
             decimal[] decimalArray = inputArray.Select((s) => {
