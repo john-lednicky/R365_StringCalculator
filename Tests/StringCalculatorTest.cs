@@ -9,7 +9,7 @@ namespace StringCalculator.Tests
         [Theory]
         [InlineData("", "0")]
         [InlineData("20", "20")]
-        [InlineData("1,5000", "5001")]
+        [InlineData("1,500", "501")]
         [InlineData("1.1,2.2", "3.3")]
         public void ShouldAddTwoNumbers_HappyPath(string input, string expected)
         {
@@ -29,7 +29,7 @@ namespace StringCalculator.Tests
         }
 
         [Theory]
-        [InlineData("1\n5000", "5001")]
+        [InlineData("1\n500", "501")]
         [InlineData("1\n2,3", "6")]
         [InlineData("1,2\n3", "6")]
         public void ShouldAllowNewlineDelimiter(string input, string expected)
@@ -61,6 +61,15 @@ namespace StringCalculator.Tests
                     }
                 }
             );
+        }
+
+        [Theory]
+        [InlineData("2,1001,6", "8")]
+        public void ShouldDiscardNumbersOver1000(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
         }
     }
 }
