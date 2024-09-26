@@ -20,25 +20,14 @@ namespace StringCalculator.Tests
         }
 
         [Theory]
-        [InlineData("1,2,3")]
-        public void ShouldThrowExceptionIfMoreThanTwoNumbers(string input)
+        [InlineData("1,2,3", "6")]
+        [InlineData("1,2,3,4,5,6,7,8,9,10,11,12", "78")]
+        public void ShouldAddMoreThanTwoNumbers_HappyPath(string input, string expected)
         {
             var calculator = new StringCalculator();
-
-            Assert.Throws<FormatException>(
-                () =>
-                {
-                    try
-                    {
-                        calculator.Add(input);
-                    }
-                    catch (FormatException ex)
-                    {
-                        Assert.Equal(messages["MoreThanTwoNumbers"], ex.Message);
-                        throw;
-                    }
-                }
-            );
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
         }
+
     }
 }
