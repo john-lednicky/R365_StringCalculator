@@ -18,7 +18,7 @@
             decimal[] decimalArray = inputArray.Select((s) => {
                     decimal val = 0;
                     decimal.TryParse(s, out  val);
-                    return val;
+                    return val > 1000 ? 0 : val;
                 })
                 .ToArray();
 
