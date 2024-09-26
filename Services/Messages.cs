@@ -13,6 +13,7 @@ namespace StringCalculator.Services
         static Messages()
         {
             messages.Add("MoreThanTwoNumbers", "Input can only contain two numbers.");
+            messages.Add("NegativeNumbers", "Input cannot negative numbers.");
         }
 
         public string this[string key]

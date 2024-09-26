@@ -10,7 +10,6 @@ namespace StringCalculator.Tests
         [InlineData("", "0")]
         [InlineData("20", "20")]
         [InlineData("1,5000", "5001")]
-        [InlineData("4,-3", "1")]
         [InlineData("1.1,2.2", "3.3")]
         public void ShouldAddTwoNumbers_HappyPath(string input, string expected)
         {
@@ -40,6 +39,28 @@ namespace StringCalculator.Tests
             Assert.Equal(expected, result);
         }
 
+        [Theory]
+        [InlineData("-1,2", "-1")]
+        [InlineData("-1,2,-3,-4", "-1,-3,-4")]
+        public void ShouldDisallowNegativeNumbers(string input, string negatives)
+        {
+            var calculator = new StringCalculator();
 
+            Assert.Throws<FormatException>(
+                () =>
+                {
+                    try
+                    {
+                        calculator.Add(input);
+                    }
+                    catch (FormatException ex)
+                    {
+                        Assert.StartsWith(messages["NegativeNumbers"], ex.Message);
+                        Assert.EndsWith(negatives, ex.Message);
+                        throw;
+                    }
+                }
+            );
+        }
     }
 }
