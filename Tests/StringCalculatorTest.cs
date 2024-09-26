@@ -29,5 +29,17 @@ namespace StringCalculator.Tests
             Assert.Equal(expected, result);
         }
 
+        [Theory]
+        [InlineData("1\n5000", "5001")]
+        [InlineData("1\n2,3", "6")]
+        [InlineData("1,2\n3", "6")]
+        public void ShouldAllowNewlineDelimiter(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
+        }
+
+
     }
 }
