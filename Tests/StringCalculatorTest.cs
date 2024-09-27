@@ -70,5 +70,26 @@ namespace StringCalculator.Tests
             var result = calculator.Add(input);
             Assert.Equal(expected, result);
         }
+
+        [Theory]
+        [InlineData("2,1001,6,", "8")]
+        public void ShouldNotCareAboutTrailingDelimiter(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("//#\n2#5", "7")]
+        [InlineData("//~\n2~5,3", "10")]
+        [InlineData("//~\n2~5\n3", "10")]
+        [InlineData("//,\n2,ff,100", "102")]
+        public void ShouldAllowSingleCharacterCustomDelimiter(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
+        }
     }
 }
