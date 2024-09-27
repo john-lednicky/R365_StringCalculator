@@ -22,9 +22,7 @@
 
             AssertNoNegativeNumbers(decimalArray);
 
-            List<decimal> decimalList = new List<decimal>(decimalArray);
-
-            return decimalList.Sum().ToString();
+            return decimalArray.Sum().ToString();
         }
 
         private void AssertNoNegativeNumbers(decimal[] decimalArray)
