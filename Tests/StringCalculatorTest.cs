@@ -14,7 +14,7 @@ namespace StringCalculator.Tests
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
-            Assert.Equal(expected, result);
+            Assert.EndsWith(expected, result);
         }
 
         [Theory]
@@ -24,7 +24,7 @@ namespace StringCalculator.Tests
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
-            Assert.Equal(expected, result);
+            Assert.EndsWith(expected, result);
         }
 
         [Theory]
@@ -35,7 +35,7 @@ namespace StringCalculator.Tests
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
-            Assert.Equal(expected, result);
+            Assert.EndsWith(expected, result);
         }
 
         [Theory]
@@ -68,7 +68,7 @@ namespace StringCalculator.Tests
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
-            Assert.Equal(expected, result);
+            Assert.EndsWith(expected, result);
         }
 
         [Theory]
@@ -77,7 +77,7 @@ namespace StringCalculator.Tests
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
-            Assert.Equal(expected, result);
+            Assert.EndsWith(expected, result);
         }
 
         [Theory]
@@ -89,7 +89,7 @@ namespace StringCalculator.Tests
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
-            Assert.Equal(expected, result);
+            Assert.EndsWith(expected, result);
         }
 
         [Theory]
@@ -102,7 +102,7 @@ namespace StringCalculator.Tests
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
-            Assert.Equal(expected, result);
+            Assert.EndsWith(expected, result);
         }
 
         [Theory]
@@ -136,6 +136,28 @@ namespace StringCalculator.Tests
         [InlineData("//[***][-,-]\n11***22-,-33,44", "110")]
         [InlineData("//[***][-\n-]\n11***22-\n-33,44", "110")]
         public void ShouldAllowMultipleStringCharacterCustomDelimiters(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.EndsWith(expected, result);
+        }
+
+        [Theory]
+        [InlineData("", "0 = 0")]
+        [InlineData("20", "20 = 20")]
+        [InlineData("1,500", "1+500 = 501")]
+        [InlineData("1.1,2.2", "1.1+2.2 = 3.3")]
+        public void ShouldAddTwoNumbersAndShowCalculation_HappyPath(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("1,2,3", "1+2+3 = 6")]
+        [InlineData("1,2,3,4,5,6,7,8,9,10,11,12", "1+2+3+4+5+6+7+8+9+10+11+12 = 78")]
+        public void ShouldAddMoreThanTwoNumbersAndShowCalculation_HappyPath(string input, string expected)
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
