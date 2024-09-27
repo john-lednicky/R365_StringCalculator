@@ -8,14 +8,10 @@
 
             var (customDelimiters, inputBody) = extractDelimitersAndBody(input);
 
-            // If a custom delimiter was supplied, add it to the delimiter array
+            // If custom delimiters were supplied, add it to the delimiter array
             string[] delimiters = customDelimiters.Concat([ ",", "\n"]).ToArray();
 
-            string normalizedInput = inputBody;
-
-            foreach (string c in delimiters) normalizedInput = normalizedInput.Replace(c, ",");
-            string[] inputArray = normalizedInput.Split(',');
-
+            string[] inputArray = inputBody.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
             //Numbers outside the range of the decimal data type will be converted to zero.
             decimal[] decimalArray = inputArray.Select((s) => {
