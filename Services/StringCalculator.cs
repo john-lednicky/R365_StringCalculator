@@ -2,7 +2,7 @@
 {
     public class StringCalculator
     {
-        public string Add(string input)
+        public string Add(string input, string delimiter = "\n", bool allowNegatives = false, decimal numberLimit = 1000)
         {
             if (input == "") return "0 = 0";
 

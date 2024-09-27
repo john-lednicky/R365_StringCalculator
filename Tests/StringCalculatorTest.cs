@@ -163,5 +163,37 @@ namespace StringCalculator.Tests
             var result = calculator.Add(input);
             Assert.Equal(expected, result);
         }
+
+        [Theory]
+        [InlineData("", "^^", "0")]
+        [InlineData("1^^500", "^^", "501")]
+        [InlineData("1.1^^2.2", "^^", "3.3")]
+        public void ShouldUseParameterizedDelimiter(string input, string delimiter, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input, delimiter: delimiter);
+            Assert.EndsWith(expected, result);
+        }
+
+        [Theory]
+        [InlineData("", true, "0")]
+        [InlineData("-1,500", true, "499")]
+        [InlineData("1.1,2.2",true, "3.3")]
+        public void ShouldUseParameterizedNegatives(string input, bool allowNegatives, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input, allowNegatives: allowNegatives);
+            Assert.EndsWith(expected, result);
+        }
+
+        [Theory]
+        [InlineData("2,1001,6", 2000, "1009")]
+        [InlineData("2,2001,6", 2000, "8")]
+        public void ShouldAllowNumbersOver1000(string input, decimal numberLimit, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input, numberLimit: numberLimit);
+            Assert.EndsWith(expected, result);
+        }
     }
 }
