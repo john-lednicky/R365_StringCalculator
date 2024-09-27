@@ -98,7 +98,7 @@ namespace StringCalculator.Tests
         [InlineData("//[***]\n11***22,33", "66")]
         [InlineData("//[*,*]\n11*,*22,33", "66")]
         [InlineData("//[*,*]\n11*,*22\n33", "66")]
-        public void ShouldAllowMultipleCharacterCustomDelimiter(string input, string expected)
+        public void ShouldAllowStringCustomDelimiter(string input, string expected)
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
@@ -108,6 +108,7 @@ namespace StringCalculator.Tests
         [Theory]
         [InlineData("//***]\n11***22,33")]
         [InlineData("//[*,*\n11*,*22,33")]
+        [InlineData("//[*,*][$#\n11*,*22,33")]
         public void ShouldDisallowMalformedPrefix(string input)
         {
             var calculator = new StringCalculator();
@@ -126,6 +127,19 @@ namespace StringCalculator.Tests
                     }
                 }
             );
+        }
+
+        [Theory]
+        [InlineData("//[*][!!][r9r]\n11r9r22*hh*33!!44", "110")]
+        [InlineData("//[***][---]\n11***22,33---44", "110")]
+        [InlineData("//[***][-[-]\n11***22-[-33,44", "110")]
+        [InlineData("//[***][-,-]\n11***22-,-33,44", "110")]
+        [InlineData("//[***][-\n-]\n11***22-\n-33,44", "110")]
+        public void ShouldAllowMultipleStringCharacterCustomDelimiters(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
         }
     }
 }
