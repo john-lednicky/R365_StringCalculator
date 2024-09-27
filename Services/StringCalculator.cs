@@ -4,7 +4,7 @@
     {
         public string Add(string input)
         {
-            if (input == "") return "0";
+            if (input == "") return "0 = 0";
 
             var (customDelimiters, inputBody) = extractDelimitersAndBody(input);
 
@@ -23,7 +23,9 @@
 
             AssertNoNegativeNumbers(decimalArray);
 
-            return decimalArray.Sum().ToString();
+            string calculation = string.Join("+", decimalArray);
+            string answer = decimalArray.Sum().ToString();
+            return $"{calculation} = {answer}";
         }
 
         private (string[], string) extractDelimitersAndBody(string input)
