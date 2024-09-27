@@ -61,6 +61,15 @@ namespace Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom delimiter with multiple characters must have open and closed braces: //[{delimiter}]\n{numbers}.
+        /// </summary>
+        internal static string CustomDelimiterMalformed {
+            get {
+                return ResourceManager.GetString("CustomDelimiterMalformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Input can only contain two numbers..
         /// </summary>
         internal static string MoreThanTwoNumbers {
