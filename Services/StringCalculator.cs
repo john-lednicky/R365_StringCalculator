@@ -6,10 +6,10 @@
         {
             if (input == "") return "0";
 
-            var (customDelimiter, inputBody) = parseCustomDelimiter(input);
+            var (customDelimiters, inputBody) = extractDelimitersAndBody(input);
 
             // If a custom delimiter was supplied, add it to the delimiter array
-            string[] delimiters = customDelimiter == null ? [ ",", "\n" ] : [ ",", "\n", customDelimiter];
+            string[] delimiters = customDelimiters.Concat([ ",", "\n"]).ToArray();
 
             string normalizedInput = inputBody;
 
@@ -30,38 +30,47 @@
             return decimalArray.Sum().ToString();
         }
 
-        private (string?, string) parseCustomDelimiter(string input)
+        private (string[], string) extractDelimitersAndBody(string input)
         {
-            string? delimiter = null;
+            string[] delimiters = [];
             string body;
-            int firstNewlinePos = input.IndexOf('\n');
 
-            // If the beginning of the input looks like the custom delimiter specifier
-            if (input.StartsWith("//") && firstNewlinePos >= 3)
+            if (input.StartsWith("//["))
             {
-                string delimiterSpec = input.Substring(2, firstNewlinePos - 2);
-                
-                if (delimiterSpec.Length == 1)
-                {
-                    // If the delimiter is a single character, return it
-                    delimiter = delimiterSpec[0].ToString();
-                }
-                else {
-                    //Otherwise, check that the delimiter is well formed with open and closed braces, then return it.
-                    if (delimiterSpec.StartsWith("[") && delimiterSpec.EndsWith("]"))
-                    {
-                        delimiter = delimiterSpec.Substring(1, delimiterSpec.Length - 2);
-                    }
-                    else {
-                        throw new FormatException(Config.GetErrorMessage("CustomDelimiterMalformed"));
-                    }
-                }
+                int prefixBoundary = input.IndexOf("]\n") + 1; // The newline separating the prefix from the body.
+
+                if (prefixBoundary == 0) throw new FormatException(Config.GetErrorMessage("CustomDelimiterMalformed"));
+
+                string delimiterSpec = input.Substring(2,prefixBoundary-2); //The delimiters without the leading slashes.
+
+                body = input.Substring(prefixBoundary+1);
+                delimiters = parseDelimiterSpec(delimiterSpec);
+            }
+            else if(input.StartsWith("//"))
+            {
+                // A single character delimiter has fixed positions for the value and the end-of-prefix delimiter.
+                int firstNewlinePos = input.IndexOf('\n');
+                if (firstNewlinePos != 3) throw new FormatException(Config.GetErrorMessage("CustomDelimiterMalformed"));
+                delimiters = [ input[2].ToString() ];
                 body = input.Substring(firstNewlinePos + 1);
-            } else
+            }
+            else
             {
+                // There is no prefix, just return the entire input as the body.
                 body = input;
             }
-            return (delimiter, body);
+            return (delimiters, body);
+        }
+
+        private string[] parseDelimiterSpec(string delimiterSpec) {
+            //Remove outer brackets
+            var spec = delimiterSpec.Substring(1,delimiterSpec.Length - 2);
+
+            //Split on inner brackets
+            var returnValue = spec.Split("][");
+
+            //Remove empties and return
+            return returnValue.Where(s => s != string.Empty).ToArray();
         }
 
         private void AssertNoNegativeNumbers(decimal[] decimalArray)
