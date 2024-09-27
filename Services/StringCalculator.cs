@@ -11,9 +11,7 @@
             // If custom delimiters were supplied, add it to the delimiter array
             string[] delimiters = customDelimiters.Concat([ ",", "\n"]).ToArray();
 
-            // var inputArray = inputBody.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-
-            var inputArray = SplitStringCustom(inputBody, delimiters);
+            var inputArray = inputBody.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
             //Numbers outside the range of the decimal data type will be converted to zero.
             decimal[] decimalArray = inputArray.Select((s) => {
@@ -58,34 +56,6 @@
                 body = input;
             }
             return (delimiters, body);
-        }
-
-        private List<string> SplitStringCustom(string input, params string[] delimiters)
-        {
-            var result = new List<string>();
-
-            // Sliding window to pull out substrings between delimiters.
-            int i = 0;
-            int k = 0;
-            while (k < input.Length)
-            {
-                //Check if each character is the start of a delimiter
-                foreach (var delimiter in delimiters) {
-                    if (k + delimiter.Length < input.Length && input.Substring(k,delimiter.Length) == delimiter)
-                    {
-                        // Add the previous substring to the output
-                        result.Add(input.Substring(i, k-i));
-                        // Set i and k to the character after the delimiter
-                        i = k + delimiter.Length;
-                        k = i;
-                    }
-                }
-                k++;
-            }
-            //Catch the last stray
-            result.Add(input.Substring(i, k - i));
-
-            return result;
         }
 
         private string[] parseDelimiterSpec(string delimiterSpec) {
