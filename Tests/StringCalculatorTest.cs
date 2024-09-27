@@ -4,7 +4,6 @@ namespace StringCalculator.Tests
 
     public class StringCalculatorTest
     {
-        Messages messages = new();
 
         [Theory]
         [InlineData("", "0")]
@@ -55,7 +54,7 @@ namespace StringCalculator.Tests
                     }
                     catch (FormatException ex)
                     {
-                        Assert.StartsWith(messages["NegativeNumbers"], ex.Message);
+                        Assert.StartsWith(Config.GetErrorMessage("NegativeNumbers"), ex.Message);
                         Assert.EndsWith(negatives, ex.Message);
                         throw;
                     }

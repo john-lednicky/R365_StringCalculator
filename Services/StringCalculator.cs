@@ -2,8 +2,6 @@
 {
     public class StringCalculator
     {
-        Messages messages = new Messages();
-
         public string Add(string input)
         {
             if (input == "") return "0";
@@ -34,7 +32,7 @@
             decimal[] negativeNumbers = decimalArray.Where(d => d < 0).ToArray();
             if (negativeNumbers.Length > 0)
             {
-                throw new FormatException($"{messages["NegativeNumbers"]} Input contained {string.Join(",", negativeNumbers)}");
+                throw new FormatException($"{Config.GetErrorMessage("NegativeNumbers")} Input contained {string.Join(",", negativeNumbers)}");
             }
         }
     }
