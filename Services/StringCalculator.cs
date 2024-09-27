@@ -6,8 +6,12 @@
         {
             if (input == "") return "0";
 
-            char[] delimiters = { ',', '\n' };
-            string normalizedInput = input;
+            var (customDelimiter, inputBody) = parseCustomDelimiter(input);
+
+            // If a custom delimiter was supplied, add it to the delimiter array
+            char[] delimiters = customDelimiter == null ? new[] { ',', '\n' } : new[] { ',', '\n', (char)customDelimiter };
+
+            string normalizedInput = inputBody;
             foreach (char c in delimiters) normalizedInput = normalizedInput.Replace(c, ',');
             string[] inputArray = normalizedInput.Split(',');
 
@@ -23,6 +27,24 @@
             AssertNoNegativeNumbers(decimalArray);
 
             return decimalArray.Sum().ToString();
+        }
+
+        private (char?, string) parseCustomDelimiter(string input)
+        {
+            char? delimiter = null;
+            string body;
+
+            // If the beginning of the input looks like the custom delimiter specifier
+            if (input.Length > 4 && input.StartsWith("//") && input[3] == '\n')
+            {
+                // Parse the input into delimiter and body
+                delimiter = input[2];
+                body = input.Substring(4);
+            } else
+            {
+                body = input;
+            }
+            return (delimiter, body);
         }
 
         private void AssertNoNegativeNumbers(decimal[] decimalArray)
