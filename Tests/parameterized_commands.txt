@@ -1,0 +1,5 @@
+﻿./StringCalculator.exe 1,2^3,4,5 -d^ 
+./StringCalculator.exe 1,2,3,4,10000 -l 100000
+./StringCalculator.exe 1,2,3,4,-11 -n
+
+

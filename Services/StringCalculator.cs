@@ -9,7 +9,7 @@
             var (customDelimiters, inputBody) = extractDelimitersAndBody(input);
 
             // If custom delimiters were supplied, add it to the delimiter array
-            string[] delimiters = customDelimiters.Concat([ ",", "\n"]).ToArray();
+            string[] delimiters = customDelimiters.Concat([ ",", delimiter]).ToArray();
 
             var inputArray = inputBody.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
 
@@ -17,11 +17,11 @@
             decimal[] decimalArray = inputArray.Select((s) => {
                     decimal val = 0;
                     decimal.TryParse(s, out  val);
-                    return val > 1000 ? 0 : val;
+                    return val > numberLimit ? 0 : val;
                 })
                 .ToArray();
 
-            AssertNoNegativeNumbers(decimalArray);
+            if(!allowNegatives) AssertNoNegativeNumbers(decimalArray);
 
             string calculation = string.Join("+", decimalArray);
             string answer = decimalArray.Sum().ToString();
