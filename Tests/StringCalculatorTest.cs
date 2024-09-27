@@ -97,11 +97,35 @@ namespace StringCalculator.Tests
         [InlineData("//[***]\n11,22***33", "66")]
         [InlineData("//[***]\n11***22,33", "66")]
         [InlineData("//[*,*]\n11*,*22,33", "66")]
-        public void ShouldAllowMutlipleCharacterCustomDelimiter(string input, string expected)
+        [InlineData("//[*,*]\n11*,*22\n33", "66")]
+        public void ShouldAllowMultipleCharacterCustomDelimiter(string input, string expected)
         {
             var calculator = new StringCalculator();
             var result = calculator.Add(input);
             Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("//***]\n11***22,33")]
+        [InlineData("//[*,*\n11*,*22,33")]
+        public void ShouldDisallowMalformedPrefix(string input)
+        {
+            var calculator = new StringCalculator();
+
+            Assert.Throws<FormatException>(
+                () =>
+                {
+                    try
+                    {
+                        calculator.Add(input);
+                    }
+                    catch (FormatException ex)
+                    {
+                        Assert.StartsWith(Config.GetErrorMessage("CustomDelimiterMalformed"), ex.Message);
+                        throw;
+                    }
+                }
+            );
         }
     }
 }
