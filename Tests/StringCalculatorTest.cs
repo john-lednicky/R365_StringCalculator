@@ -91,5 +91,17 @@ namespace StringCalculator.Tests
             var result = calculator.Add(input);
             Assert.Equal(expected, result);
         }
+
+        [Theory]
+        [InlineData("//[***]\n11***22***33", "66")]
+        [InlineData("//[***]\n11,22***33", "66")]
+        [InlineData("//[***]\n11***22,33", "66")]
+        [InlineData("//[*,*]\n11*,*22,33", "66")]
+        public void ShouldAllowMutlipleCharacterCustomDelimiter(string input, string expected)
+        {
+            var calculator = new StringCalculator();
+            var result = calculator.Add(input);
+            Assert.Equal(expected, result);
+        }
     }
 }
