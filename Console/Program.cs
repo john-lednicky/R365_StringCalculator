@@ -17,11 +17,6 @@
                 .AddSingleton<StringCalculator>()
                 .BuildServiceProvider();
 
-            var inputArgument = new Argument<string>(
-                name: "input",
-                description: "Numbers to process with optional prefix to define delimiters."
-                );
-
             var delimiterOption = new Option<string>(
                 name: "--delimiter",
                 description: "Alternate delimiter to use instead of newline.",
@@ -44,23 +39,47 @@
             numberLimitOption.AddAlias("-l");
 
             var rootCommand = new RootCommand();
-            rootCommand.Add(inputArgument);
             rootCommand.Add(delimiterOption);
             rootCommand.Add(allowNegativesOption);
             rootCommand.Add(numberLimitOption);
 
-            rootCommand.SetHandler(async (inputArgumentValue, delimiterOptionValue, allowNegativesOptionValue, numberLimitOptionValue) => {
+            rootCommand.SetHandler((delimiterOptionValue, allowNegativesOptionValue, numberLimitOptionValue) => {
 
                 var sc = services.GetRequiredService<StringCalculator>();
-                var result = sc.Add(inputArgumentValue, delimiterOptionValue, allowNegativesOptionValue, numberLimitOptionValue);
-                Console.WriteLine(result);
+
+                Console.WriteLine("Calculator ready!  (ctrl-c or enter to exit)");
+                Console.WriteLine($"   delimiter: {delimiterOptionValue}");
+                Console.WriteLine($"   negative numbers {(allowNegativesOptionValue ? string.Empty : "not ")}allowed");
+                Console.WriteLine($"   numbers over {numberLimitOptionValue} will be converted to zero");
+                
+                while (true)
+                {
+                    Console.Write("Calculate this: ");
+                    string inputValue = Console.ReadLine() ?? string.Empty;
+
+                    // ctrl-c and OnCancelKeyPress allowed rest of loop to execute before terminating, so we break here if input is empty.
+                    if (string.IsNullOrEmpty(inputValue)) break;
+
+                    try
+                    {
+                        var result = sc.Add(inputValue, delimiterOptionValue, allowNegativesOptionValue, numberLimitOptionValue);
+                        Console.WriteLine(result);
+                    }
+                    catch (FormatException ex)
+                    {
+                        Console.Error.WriteLine(ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine(ex);
+                    }
+                }
             },
-                inputArgument, delimiterOption, allowNegativesOption, numberLimitOption
+                delimiterOption, allowNegativesOption, numberLimitOption
             );
 
             rootCommand.InvokeAsync(args);
 
         }
     }
-
 }
