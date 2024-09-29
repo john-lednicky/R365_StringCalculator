@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Services {
+namespace Common {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Services {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Services.ErrorMessages", typeof(ErrorMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Common.ErrorMessages", typeof(ErrorMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom delimiter with multiple characters must have open and closed braces: //[{delimiter}]\n{numbers}.
+        ///   Looks up a localized string similar to `.
         /// </summary>
         internal static string CustomDelimiterMalformed {
             get {

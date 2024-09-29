@@ -1,9 +1,19 @@
 namespace StringCalculator.Tests
 {
     using StringCalculator.Services;
+    using StringCalculator.Common;
 
     public class StringCalculatorTest
     {
+        private readonly IConfig config;
+        private readonly IInputParser inputParser ;
+        private readonly IValidators validators;
+
+        public StringCalculatorTest() {
+            config = new Config();
+            inputParser = new InputParser(config);
+            validators = new Validators(config);
+        }
 
         [Theory]
         [InlineData("", "0")]
@@ -12,7 +22,7 @@ namespace StringCalculator.Tests
         [InlineData("1.1,2.2", "3.3")]
         public void ShouldAddTwoNumbers_HappyPath(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -22,7 +32,7 @@ namespace StringCalculator.Tests
         [InlineData("1,2,3,4,5,6,7,8,9,10,11,12", "78")]
         public void ShouldAddMoreThanTwoNumbers_HappyPath(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -33,7 +43,7 @@ namespace StringCalculator.Tests
         [InlineData("1,2\n3", "6")]
         public void ShouldAllowNewlineDelimiter(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -43,7 +53,7 @@ namespace StringCalculator.Tests
         [InlineData("-1,2,-3,-4", "-1,-3,-4")]
         public void ShouldDisallowNegativeNumbers(string input, string negatives)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
 
             Assert.Throws<FormatException>(
                 () =>
@@ -54,7 +64,7 @@ namespace StringCalculator.Tests
                     }
                     catch (FormatException ex)
                     {
-                        Assert.StartsWith(Config.GetErrorMessage("NegativeNumbers"), ex.Message);
+                        Assert.StartsWith(config.GetErrorMessage("NegativeNumbers"), ex.Message);
                         Assert.EndsWith(negatives, ex.Message);
                         throw;
                     }
@@ -66,7 +76,7 @@ namespace StringCalculator.Tests
         [InlineData("2,1001,6", "8")]
         public void ShouldDiscardNumbersOver1000(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -75,7 +85,7 @@ namespace StringCalculator.Tests
         [InlineData("2,1001,6,", "8")]
         public void ShouldNotCareAboutTrailingDelimiter(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -87,7 +97,7 @@ namespace StringCalculator.Tests
         [InlineData("//,\n2,ff,100", "102")]
         public void ShouldAllowSingleCharacterCustomDelimiter(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -100,7 +110,7 @@ namespace StringCalculator.Tests
         [InlineData("//[*,*]\n11*,*22\n33", "66")]
         public void ShouldAllowStringCustomDelimiter(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -111,7 +121,7 @@ namespace StringCalculator.Tests
         [InlineData("//[*,*][$#\n11*,*22,33")]
         public void ShouldDisallowMalformedPrefix(string input)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
 
             Assert.Throws<FormatException>(
                 () =>
@@ -122,7 +132,7 @@ namespace StringCalculator.Tests
                     }
                     catch (FormatException ex)
                     {
-                        Assert.StartsWith(Config.GetErrorMessage("CustomDelimiterMalformed"), ex.Message);
+                        Assert.StartsWith(config.GetErrorMessage("CustomDelimiterMalformed"), ex.Message);
                         throw;
                     }
                 }
@@ -137,7 +147,7 @@ namespace StringCalculator.Tests
         [InlineData("//[***][-\n-]\n11***22-\n-33,44", "110")]
         public void ShouldAllowMultipleStringCharacterCustomDelimiters(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.EndsWith(expected, result);
         }
@@ -149,7 +159,7 @@ namespace StringCalculator.Tests
         [InlineData("1.1,2.2", "1.1+2.2 = 3.3")]
         public void ShouldAddTwoNumbersAndShowCalculation_HappyPath(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.Equal(expected, result);
         }
@@ -159,7 +169,7 @@ namespace StringCalculator.Tests
         [InlineData("1,2,3,4,5,6,7,8,9,10,11,12", "1+2+3+4+5+6+7+8+9+10+11+12 = 78")]
         public void ShouldAddMoreThanTwoNumbersAndShowCalculation_HappyPath(string input, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input);
             Assert.Equal(expected, result);
         }
@@ -170,7 +180,7 @@ namespace StringCalculator.Tests
         [InlineData("1.1^^2.2", "^^", "3.3")]
         public void ShouldUseParameterizedDelimiter(string input, string delimiter, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input, delimiter: delimiter);
             Assert.EndsWith(expected, result);
         }
@@ -181,7 +191,7 @@ namespace StringCalculator.Tests
         [InlineData("1.1,2.2",true, "3.3")]
         public void ShouldUseParameterizedNegatives(string input, bool allowNegatives, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input, allowNegatives: allowNegatives);
             Assert.EndsWith(expected, result);
         }
@@ -191,7 +201,7 @@ namespace StringCalculator.Tests
         [InlineData("2,2001,6", 2000, "8")]
         public void ShouldAllowNumbersOver1000(string input, decimal numberLimit, string expected)
         {
-            var calculator = new StringCalculator();
+            var calculator = new StringCalculator(inputParser, validators);
             var result = calculator.Add(input, numberLimit: numberLimit);
             Assert.EndsWith(expected, result);
         }

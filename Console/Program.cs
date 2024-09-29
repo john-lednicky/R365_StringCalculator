@@ -1,17 +1,26 @@
 ﻿namespace StringCalculator.Console
 {
+    using Microsoft.Extensions.DependencyInjection;
     using System;
     using CommandLine;
     using StringCalculator.Services;
-
+    using StringCalculator.Common;
+    
     internal class Program
     {
         static void Main(string[] args)
         {
+            var services = new ServiceCollection()
+                .AddSingleton<IConfig, Config>()
+                .AddSingleton<IInputParser, InputParser>()
+                .AddSingleton<IValidators, Validators>()
+                .AddSingleton<StringCalculator>()
+                .BuildServiceProvider();
+
             Parser.Default.ParseArguments<Options>(args)
                    .WithParsed<Options>(o =>
                    {
-                       var sc = new StringCalculator();
+                       var sc = services.GetRequiredService<StringCalculator>();
                        var result = sc.Add(o.Input, o.Delimiter, o.AllowNegatives, o.NumberLimit);
                        Console.WriteLine(result);
                    });

@@ -1,11 +1,9 @@
 ﻿namespace StringCalculator.Services
 {
-    public class StringCalculator
+    using Common;
+
+    public class StringCalculator(IInputParser inputParser, IValidators validators) : IStringCalculator
     {
-        public interface IStringCalculator
-        {
-            string Add(string input, string delimiter = "\n", bool allowNegatives = false, decimal numberLimit = 1000);
-        }
         /// <summary>
         /// Calculates the sum of numbers in a given string input using specified delimiters.
         /// </summary>
@@ -36,11 +34,12 @@
         /// <exception cref="FormatException">
         ///     Thrown when the input contains malformed custom delimiters or invalid characters.
         /// </exception>
+        /// <see href="https://www.phind.com/search?cache=bgcmdvn4o934wr40qj4psbwj">See chatbot thread that wrote this docstring.</see>
         public string Add(string input, string delimiter = "\n", bool allowNegatives = false, decimal numberLimit = 1000)
         {
             if (input == "") return "0 = 0";
 
-            var (customDelimiters, inputBody) = extractDelimitersAndBody(input);
+            var (customDelimiters, inputBody) = inputParser.ExtractDelimitersAndBody(input);
 
             // If custom delimiters were supplied, add it to the delimiter array
             string[] delimiters = customDelimiters.Concat([ ",", delimiter]).ToArray();
@@ -55,63 +54,11 @@
                 })
                 .ToArray();
 
-            if(!allowNegatives) AssertNoNegativeNumbers(decimalArray);
+            if(!allowNegatives) validators.AssertNoNegativeNumbers(decimalArray);
 
             string calculation = string.Join("+", decimalArray);
             string answer = decimalArray.Sum().ToString();
             return $"{calculation} = {answer}";
-        }
-
-        private (string[], string) extractDelimitersAndBody(string input)
-        {
-            string[] delimiters = [];
-            string body;
-
-            if (input.StartsWith("//["))
-            {
-                int prefixBoundary = input.IndexOf("]\n") + 1; // The newline separating the prefix from the body.
-
-                if (prefixBoundary == 0) throw new FormatException(Config.GetErrorMessage("CustomDelimiterMalformed"));
-
-                string delimiterSpec = input.Substring(2,prefixBoundary-2); //The delimiters without the leading slashes.
-
-                body = input.Substring(prefixBoundary+1);
-                delimiters = parseDelimiterSpec(delimiterSpec);
-            }
-            else if(input.StartsWith("//"))
-            {
-                // A single character delimiter has fixed positions for the value and the end-of-prefix delimiter.
-                int firstNewlinePos = input.IndexOf('\n');
-                if (firstNewlinePos != 3) throw new FormatException(Config.GetErrorMessage("CustomDelimiterMalformed"));
-                delimiters = [ input[2].ToString() ];
-                body = input.Substring(firstNewlinePos + 1);
-            }
-            else
-            {
-                // There is no prefix, just return the entire input as the body.
-                body = input;
-            }
-            return (delimiters, body);
-        }
-
-        private string[] parseDelimiterSpec(string delimiterSpec) {
-            //Remove outer brackets
-            var spec = delimiterSpec.Substring(1,delimiterSpec.Length - 2);
-
-            //Split on inner brackets
-            var returnValue = spec.Split("][");
-
-            //Remove empties and return
-            return returnValue.Where(s => s != string.Empty).ToArray();
-        }
-
-        private void AssertNoNegativeNumbers(decimal[] decimalArray)
-        {
-            decimal[] negativeNumbers = decimalArray.Where(d => d < 0).ToArray();
-            if (negativeNumbers.Length > 0)
-            {
-                throw new FormatException($"{Config.GetErrorMessage("NegativeNumbers")} Input contained {string.Join(",", negativeNumbers)}");
-            }
         }
     }
 
