@@ -12,6 +12,7 @@ Create a calculator that only supports an Add operation given a single formatted
 * Excluding stretch goals will not affect your overall assessment but implementing them poorly will
 
 ## Requirements
+~~
 1. Support a maximum of 2 numbers using a comma delimiter. Throw an exception when more than 2 numbers are provided
 	* examples: `20` will return `20`; `1,5000` will return `5001`; `4,-3` will return `1`
 	* empty input or missing numbers should be converted to `0`
@@ -29,7 +30,7 @@ Create a calculator that only supports an Add operation given a single formatted
 8. Support multiple delimiters of any length using the format: `//[{delimiter1}][{delimiter2}]...\n{numbers}`
 	* example: `//[*][!!][r9r]\n11r9r22*hh*33!!44` will return `110`
 	* all previous formats should also be supported
-
+~~
 ## Stretch goals
 1. Display the formula used to calculate the result e.g. `2,,4,rrrr,1001,6` will return `2+0+4+0+0+6 = 12`
 2. Allow the application to process entered entries until Ctrl+C is used
